@@ -38,4 +38,14 @@ public class MuralController {
             @AuthenticationPrincipal UserDetails userDetails) {
         return ResponseEntity.ok(muralService.publicar(eventoId, userDetails.getUsername(), dto));
     }
+
+    @Operation(summary = "Excluir mensagem do mural (autor ou organizador)")
+    @DeleteMapping("/{mensagemId}")
+    public ResponseEntity<Void> excluir(
+            @PathVariable String eventoId,
+            @PathVariable String mensagemId,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        muralService.excluir(eventoId, mensagemId, userDetails.getUsername());
+        return ResponseEntity.noContent().build();
+    }
 }

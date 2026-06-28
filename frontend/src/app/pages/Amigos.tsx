@@ -5,10 +5,11 @@ import {
   solicitarAmizade,
   aceitarAmizade,
   recusarAmizade,
+  removerAmigo,
 } from '../../api/amizades'
 import type { Amizade } from '../../types'
 import { useAuth } from '../../hooks/useAuth'
-import { UserPlus, Users, Clock, Check, X, Search } from 'lucide-react'
+import { UserPlus, Users, Clock, Check, X, Search, UserMinus } from 'lucide-react'
 
 type Tab = 'amigos' | 'pendentes' | 'adicionar'
 
@@ -57,6 +58,11 @@ export function Amigos() {
 
   const handleRecusar = async (a: Amizade) => {
     await recusarAmizade(a.id).catch(() => {})
+    carregar()
+  }
+
+  const handleRemover = async (a: Amizade) => {
+    await removerAmigo(a.id).catch(() => {})
     carregar()
   }
 
@@ -133,9 +139,13 @@ export function Amigos() {
                         <p className="font-semibold text-gray-800">{getNomeAmigo(a)}</p>
                         <p className="text-xs text-gray-400">@{getUsernameAmigo(a)}</p>
                       </div>
-                      <span className="text-xs bg-green-50 text-verde font-medium px-2.5 py-1 rounded-full">
-                        Amigos ✓
-                      </span>
+                      <button
+                        onClick={() => handleRemover(a)}
+                        className="flex items-center gap-1 text-xs text-red-400 hover:text-red-600 hover:bg-red-50 px-2.5 py-1 rounded-full transition-colors"
+                        title="Remover amigo"
+                      >
+                        <UserMinus size={13} /> Remover
+                      </button>
                     </li>
                   ))}
                 </ul>

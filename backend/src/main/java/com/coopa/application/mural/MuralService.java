@@ -47,6 +47,27 @@ public class MuralService {
         return toDTO(muralRepository.save(msg));
     }
 
+    public void excluir(String eventoId, String mensagemId, String userId) {
+        MensagemMural msg = muralRepository.findById(mensagemId)
+                .orElseThrow(() -> new IllegalArgumentException("Mensagem não encontrada"));
+
+        if (!msg.getEventoId().equals(eventoId)) {
+            throw new IllegalArgumentException("Mensagem não pertence a este evento");
+        }
+
+        var evento = eventoRepository.findById(eventoId)
+                .orElseThrow(() -> new IllegalArgumentException("Evento não encontrado"));
+
+        boolean ehAutor = msg.getAutorId().equals(userId);
+        boolean ehOrganizador = evento.getOrganizadorId().equals(userId);
+
+        if (!ehAutor && !ehOrganizador) {
+            throw new IllegalArgumentException("Apenas o autor ou o organizador podem excluir esta mensagem");
+        }
+
+        muralRepository.deleteById(mensagemId);
+    }
+
     private MensagemResponseDTO toDTO(MensagemMural m) {
         return new MensagemResponseDTO(m.getId(), m.getEventoId(), m.getAutorId(),
                 m.getAutorNome(), m.getConteudo(), m.isEhOrganizador(), m.getCriadoEm());

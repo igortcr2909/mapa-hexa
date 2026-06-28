@@ -6,3 +6,6 @@ export const listarMural = (eventoId: string) =>
 
 export const publicarMensagem = (eventoId: string, conteudo: string) =>
   api.post<MensagemMural>(`/eventos/${eventoId}/mural`, { conteudo })
+
+export const excluirMensagem = (eventoId: string, mensagemId: string) =>
+  api.delete(`/eventos/${eventoId}/mural/${mensagemId}`)

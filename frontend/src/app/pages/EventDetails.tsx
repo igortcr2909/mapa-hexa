@@ -2,7 +2,7 @@ import { useEffect, useState, useRef, type FormEvent } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { buscarEvento, cancelarEvento } from '../../api/eventos'
 import { confirmarPresenca, cancelarPresenca } from '../../api/inscricoes'
-import { listarMural, publicarMensagem } from '../../api/mural'
+import { listarMural, publicarMensagem, excluirMensagem } from '../../api/mural'
 import { useAuth } from '../../hooks/useAuth'
 import type { Evento, MensagemMural } from '../../types'
 import { MapPin, Clock, Users, ArrowLeft, Send, Calendar, Trash2, X } from 'lucide-react'
@@ -68,6 +68,16 @@ export function EventDetails() {
       setConfirmCancelar(false)
     } finally {
       setLoadingCancelar(false)
+    }
+  }
+
+  const handleExcluirMensagem = async (mensagemId: string) => {
+    if (!id) return
+    try {
+      await excluirMensagem(id, mensagemId)
+      setMensagens((prev) => prev.filter((m) => m.id !== mensagemId))
+    } catch {
+      setError('Erro ao excluir mensagem')
     }
   }
 
@@ -219,7 +229,9 @@ export function EventDetails() {
         )}
 
         <div className="space-y-3 mb-4 max-h-72 overflow-y-auto">
-          {mensagens.map((msg) => (
+          {mensagens.map((msg) => {
+            const podeExcluir = user?.id === msg.autorId || user?.id === evento.organizadorId
+            return (
             <div key={msg.id} className={`rounded-lg p-3 ${msg.ehOrganizador ? 'bg-azul/5 border-l-2 border-azul' : 'bg-gray-50'}`}>
               <div className="flex items-center gap-2 mb-1">
                 <span className="text-sm font-semibold text-gray-800">{msg.autorNome}</span>
@@ -229,10 +241,20 @@ export function EventDetails() {
                 <span className="text-xs text-gray-400 ml-auto">
                   {new Date(msg.criadoEm).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}
                 </span>
+                {podeExcluir && (
+                  <button
+                    onClick={() => handleExcluirMensagem(msg.id)}
+                    className="text-gray-300 hover:text-red-400 transition-colors ml-1"
+                    title="Excluir mensagem"
+                  >
+                    <Trash2 size={13} />
+                  </button>
+                )}
               </div>
               <p className="text-sm text-gray-700">{msg.conteudo}</p>
             </div>
-          ))}
+            )
+          })}
           <div ref={muralEndRef} />
         </div>
 

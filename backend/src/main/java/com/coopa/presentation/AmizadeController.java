@@ -64,4 +64,13 @@ public class AmizadeController {
             @AuthenticationPrincipal UserDetails userDetails) {
         return ResponseEntity.ok(amizadeService.recusar(id, userDetails.getUsername()));
     }
+
+    @Operation(summary = "Remover amigo")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> remover(
+            @PathVariable String id,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        amizadeService.remover(id, userDetails.getUsername());
+        return ResponseEntity.noContent().build();
+    }
 }

@@ -70,6 +70,17 @@ public class AuthService {
             user.setNome(dto.nome());
         }
 
+        if (dto.username() != null && !dto.username().isBlank()) {
+            String newUsername = dto.username().toLowerCase().replaceAll("[^a-z0-9_.]", "");
+            if (newUsername.length() < 3 || newUsername.length() > 30) {
+                throw new IllegalArgumentException("Username deve ter entre 3 e 30 caracteres");
+            }
+            if (!newUsername.equals(user.getUsername()) && userRepository.existsByUsername(newUsername)) {
+                throw new IllegalArgumentException("Username já está em uso");
+            }
+            user.setUsername(newUsername);
+        }
+
         if (dto.avatarUrl() != null) {
             user.setAvatarUrl(dto.avatarUrl());
         }
@@ -89,6 +100,15 @@ public class AuthService {
 
         user.setAtualizadoEm(System.currentTimeMillis());
         return userRepository.save(user);
+    }
+
+    public void excluirConta(String userId, String senha) {
+        User user = getById(userId);
+        if (!passwordEncoder.matches(senha, user.getPassword())) {
+            throw new IllegalArgumentException("Senha incorreta");
+        }
+        userRepository.deleteById(userId);
+        log.info("Conta excluída: {}", userId);
     }
 
     private AuthResponseDTO buildResponse(String token, User user) {

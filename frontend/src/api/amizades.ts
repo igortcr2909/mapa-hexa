@@ -13,3 +13,6 @@ export const aceitarAmizade = (id: string) =>
 
 export const recusarAmizade = (id: string) =>
   api.put<Amizade>(`/amizades/${id}/recusar`)
+
+export const removerAmigo = (id: string) =>
+  api.delete(`/amizades/${id}`)

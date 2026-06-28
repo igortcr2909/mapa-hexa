@@ -6,6 +6,7 @@ import com.coopa.domain.auth.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -46,8 +47,22 @@ public class UserController {
         return ResponseEntity.ok(Map.of(
                 "id", user.getId(),
                 "nome", user.getNome(),
+                "username", user.getUsername() != null ? user.getUsername() : "",
                 "email", user.getEmail(),
                 "avatarUrl", user.getAvatarUrl() != null ? user.getAvatarUrl() : ""
         ));
+    }
+
+    @Operation(summary = "Excluir conta (requer senha)")
+    @DeleteMapping("/me")
+    public ResponseEntity<Void> excluirConta(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestBody Map<String, String> body) {
+        String senha = body.get("senha");
+        if (senha == null || senha.isBlank()) {
+            throw new IllegalArgumentException("Senha é obrigatória para excluir a conta");
+        }
+        authService.excluirConta(userDetails.getUsername(), senha);
+        return ResponseEntity.noContent().build();
     }
 }

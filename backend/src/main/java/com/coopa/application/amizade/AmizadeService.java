@@ -126,6 +126,16 @@ public class AmizadeService {
                 .collect(Collectors.toList());
     }
 
+    public void remover(String amizadeId, String userId) {
+        Amizade amizade = getAmizade(amizadeId);
+        boolean ehParte = amizade.getSolicitanteId().equals(userId) || amizade.getReceptorId().equals(userId);
+        if (!ehParte) {
+            throw new IllegalArgumentException("Acesso negado");
+        }
+        amizadeRepository.deleteById(amizadeId);
+        log.info("Amizade {} removida por {}", amizadeId, userId);
+    }
+
     private Amizade getAmizade(String id) {
         return amizadeRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Solicitação não encontrada"));
