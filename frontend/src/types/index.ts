@@ -2,6 +2,7 @@ export interface AuthResponse {
   token: string
   userId: string
   nome: string
+  username: string
   email: string
   tokenType: string
   expiresIn: number
@@ -10,6 +11,7 @@ export interface AuthResponse {
 export interface UserData {
   id: string
   nome: string
+  username: string
   email: string
   avatarUrl?: string
   criadoEm?: number
@@ -34,6 +36,8 @@ export interface Evento {
   totalInscritos: number
   usuarioInscrito: boolean
   criadoEm: number
+  compartilhadoComigo: boolean
+  compartilhadoPor?: string
 }
 
 export interface EventoRequest {
@@ -66,5 +70,29 @@ export interface MensagemMural {
   autorNome: string
   conteudo: string
   ehOrganizador: boolean
+  criadoEm: number
+}
+
+export interface Amizade {
+  id: string
+  solicitanteId: string
+  solicitanteNome: string
+  solicitanteUsername: string
+  receptorId: string
+  receptorNome: string
+  receptorUsername: string
+  status: 'PENDENTE' | 'ACEITA' | 'RECUSADA'
+  criadoEm: number
+}
+
+export interface Notificacao {
+  id: string
+  tipo: 'AMIZADE_RECEBIDA' | 'AMIZADE_ACEITA' | 'EVENTO_COMPARTILHADO'
+  referenciaId: string
+  remetenteId: string
+  remetenteNome: string
+  remetenteUsername: string
+  mensagem: string
+  lida: boolean
   criadoEm: number
 }

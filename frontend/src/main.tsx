@@ -10,6 +10,7 @@ import { EventDetails } from './app/pages/EventDetails'
 import { OrganizerDashboard } from './app/pages/OrganizerDashboard'
 import { Profile } from './app/pages/Profile'
 import { Notifications } from './app/pages/Notifications'
+import { Amigos } from './app/pages/Amigos'
 import './index.css'
 
 const root = document.getElementById('root')
@@ -29,6 +30,7 @@ createRoot(root).render(
               <Route path="/organize" element={<OrganizerDashboard />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/notifications" element={<Notifications />} />
+              <Route path="/amigos" element={<Amigos />} />
             </Route>
           </Route>
 

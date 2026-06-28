@@ -30,7 +30,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = (data: AuthResponse) => {
     setToken(data.token)
-    setUser({ id: data.userId, nome: data.nome, email: data.email })
+    setUser({ id: data.userId, nome: data.nome, username: data.username, email: data.email })
   }
 
   const logout = () => {

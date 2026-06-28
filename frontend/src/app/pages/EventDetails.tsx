@@ -82,7 +82,7 @@ export function EventDetails() {
   const cheio = evento.maxParticipantes != null && evento.totalInscritos >= evento.maxParticipantes && !evento.usuarioInscrito
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-6">
+    <div className="max-w-2xl mx-auto px-4 sm:px-6 py-8">
       {/* Voltar */}
       <button onClick={() => navigate('/feed')} className="flex items-center gap-1 text-verde hover:underline text-sm mb-4">
         <ArrowLeft size={16} /> Voltar aos eventos

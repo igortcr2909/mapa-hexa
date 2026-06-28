@@ -63,4 +63,18 @@ public class EventoController {
         eventoService.cancelar(id, userDetails.getUsername());
         return ResponseEntity.noContent().build();
     }
+
+    @Operation(summary = "Compartilhar evento com um amigo")
+    @PostMapping("/{id}/compartilhar")
+    public ResponseEntity<Void> compartilhar(
+            @PathVariable String id,
+            @RequestBody java.util.Map<String, String> body,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        String destinatarioId = body.get("destinatarioId");
+        if (destinatarioId == null || destinatarioId.isBlank()) {
+            throw new IllegalArgumentException("destinatarioId é obrigatório");
+        }
+        eventoService.compartilhar(id, destinatarioId, userDetails.getUsername());
+        return ResponseEntity.ok().build();
+    }
 }

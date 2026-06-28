@@ -26,9 +26,13 @@ public class AuthService {
         if (userRepository.existsByEmail(dto.email())) {
             throw new IllegalArgumentException("E-mail já cadastrado");
         }
+        if (userRepository.existsByUsername(dto.username())) {
+            throw new IllegalArgumentException("Username já está em uso");
+        }
 
         User user = User.builder()
                 .nome(dto.nome())
+                .username(dto.username().toLowerCase().replaceAll("[^a-z0-9_.]", ""))
                 .email(dto.email())
                 .password(passwordEncoder.encode(dto.password()))
                 .criadoEm(System.currentTimeMillis())
@@ -88,6 +92,6 @@ public class AuthService {
     }
 
     private AuthResponseDTO buildResponse(String token, User user) {
-        return new AuthResponseDTO(token, user.getId(), user.getNome(), user.getEmail(), "Bearer", jwtExpiration);
+        return new AuthResponseDTO(token, user.getId(), user.getNome(), user.getUsername(), user.getEmail(), "Bearer", jwtExpiration);
     }
 }

@@ -1,8 +1,8 @@
 import api from './axios'
 import type { AuthResponse, UserData } from '../types'
 
-export const register = (nome: string, email: string, password: string) =>
-  api.post<AuthResponse>('/auth/register', { nome, email, password })
+export const register = (nome: string, username: string, email: string, password: string) =>
+  api.post<AuthResponse>('/auth/register', { nome, username, email, password })
 
 export const login = (email: string, password: string) =>
   api.post<AuthResponse>('/auth/login', { email, password })

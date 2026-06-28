@@ -6,6 +6,7 @@ import { login as apiLogin, register as apiRegister } from '../../api/auth'
 export function Login() {
   const [isRegister, setIsRegister] = useState(false)
   const [nome, setNome] = useState('')
+  const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -21,6 +22,14 @@ export function Login() {
       setError('Nome deve ter ao menos 2 caracteres')
       return
     }
+    if (isRegister && (username.trim().length < 3 || username.trim().length > 30)) {
+      setError('Username deve ter entre 3 e 30 caracteres')
+      return
+    }
+    if (isRegister && !/^[a-zA-Z0-9_.]+$/.test(username)) {
+      setError('Username só pode conter letras, números, _ e .')
+      return
+    }
     if (!/\S+@\S+\.\S+/.test(email)) {
       setError('E-mail inválido')
       return
@@ -33,7 +42,7 @@ export function Login() {
     setLoading(true)
     try {
       const res = isRegister
-        ? await apiRegister(nome, email, password)
+        ? await apiRegister(nome, username, email, password)
         : await apiLogin(email, password)
       login(res.data)
       navigate('/feed')
@@ -84,17 +93,34 @@ export function Login() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {isRegister && (
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Nome</label>
-                <input
-                  type="text"
-                  value={nome}
-                  onChange={(e) => setNome(e.target.value)}
-                  placeholder="Seu nome completo"
-                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-verde focus:border-transparent"
-                  required
-                />
-              </div>
+              <>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Nome</label>
+                  <input
+                    type="text"
+                    value={nome}
+                    onChange={(e) => setNome(e.target.value)}
+                    placeholder="Seu nome completo"
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-verde focus:border-transparent"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Username</label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-medium">@</span>
+                    <input
+                      type="text"
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/[^a-z0-9_.]/g, ''))}
+                      placeholder="seu.username"
+                      className="w-full pl-7 pr-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-verde focus:border-transparent"
+                      required
+                    />
+                  </div>
+                  <p className="text-xs text-gray-400 mt-1">Usado para adicionar amigos. Único e imutável.</p>
+                </div>
+              </>
             )}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">E-mail</label>
