@@ -41,4 +41,18 @@ public class NotificacaoService {
         naoLidas.forEach(n -> n.setLida(true));
         notificacaoRepository.saveAll(naoLidas);
     }
+
+    public void excluir(String notificacaoId, String userId) {
+        Notificacao n = notificacaoRepository.findById(notificacaoId)
+                .orElseThrow(() -> new IllegalArgumentException("Notificação não encontrada"));
+        if (!n.getUserId().equals(userId)) {
+            throw new IllegalArgumentException("Acesso negado");
+        }
+        notificacaoRepository.deleteById(notificacaoId);
+    }
+
+    public void excluirTodas(String userId) {
+        List<Notificacao> todas = notificacaoRepository.findByUserIdOrderByCriadoEmDesc(userId);
+        notificacaoRepository.deleteAll(todas);
+    }
 }

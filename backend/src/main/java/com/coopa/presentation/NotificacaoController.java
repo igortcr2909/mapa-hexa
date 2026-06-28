@@ -54,4 +54,21 @@ public class NotificacaoController {
         notificacaoService.marcarTodasComoLidas(userDetails.getUsername());
         return ResponseEntity.ok().build();
     }
+
+    @Operation(summary = "Excluir notificação")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> excluir(
+            @PathVariable String id,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        notificacaoService.excluir(id, userDetails.getUsername());
+        return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "Excluir todas as notificações")
+    @DeleteMapping
+    public ResponseEntity<Void> excluirTodas(
+            @AuthenticationPrincipal UserDetails userDetails) {
+        notificacaoService.excluirTodas(userDetails.getUsername());
+        return ResponseEntity.noContent().build();
+    }
 }
