@@ -121,8 +121,14 @@ export function Feed() {
       </div>
     )
 
-  const compartilhados = eventos.filter((e) => e.compartilhadoComigo)
-  const outros = eventos.filter((e) => !e.compartilhadoComigo)
+  const porData = (a: Evento, b: Evento) => {
+    const dtA = `${a.data} ${a.horario}`
+    const dtB = `${b.data} ${b.horario}`
+    return dtA.localeCompare(dtB)
+  }
+
+  const compartilhados = eventos.filter((e) => e.compartilhadoComigo).sort(porData)
+  const outros = eventos.filter((e) => !e.compartilhadoComigo).sort(porData)
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
