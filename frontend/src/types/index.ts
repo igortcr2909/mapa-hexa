@@ -2,7 +2,7 @@ export interface AuthResponse {
   token: string
   userId: string
   nome: string
-  username: string
+  username?: string
   email: string
   tokenType: string
   expiresIn: number
@@ -11,7 +11,7 @@ export interface AuthResponse {
 export interface UserData {
   id: string
   nome: string
-  username: string
+  username?: string
   email: string
   avatarUrl?: string
   criadoEm?: number

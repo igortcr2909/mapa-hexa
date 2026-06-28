@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type ReactNode, type MouseEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
   listarNotificacoes,
@@ -11,7 +11,7 @@ import { aceitarAmizade, recusarAmizade } from '../../api/amizades'
 import type { Notificacao } from '../../types'
 import { Bell, UserPlus, Share2, CheckCheck, AlertTriangle, Trash2, Check } from 'lucide-react'
 
-const ICONE: Record<Notificacao['tipo'], React.ReactNode> = {
+const ICONE: Record<Notificacao['tipo'], ReactNode> = {
   AMIZADE_RECEBIDA: <UserPlus size={18} />,
   AMIZADE_ACEITA: <UserPlus size={18} />,
   EVENTO_COMPARTILHADO: <Share2 size={18} />,
@@ -61,7 +61,7 @@ export function Notifications() {
     }
   }
 
-  const handleMarcarLida = async (n: Notificacao, e: React.MouseEvent) => {
+  const handleMarcarLida = async (n: Notificacao, e: MouseEvent) => {
     e.stopPropagation()
     await marcarComoLida(n.id).catch(() => {})
     setNotificacoes((prev) =>
@@ -69,7 +69,7 @@ export function Notifications() {
     )
   }
 
-  const handleExcluir = async (id: string, e: React.MouseEvent) => {
+  const handleExcluir = async (id: string, e: MouseEvent) => {
     e.stopPropagation()
     await excluirNotificacao(id).catch(() => {})
     setNotificacoes((prev) => prev.filter((x) => x.id !== id))

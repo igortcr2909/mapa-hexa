@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type FormEvent, type ReactNode } from 'react'
 import {
   listarAmigos,
   listarPendentes,
@@ -35,7 +35,7 @@ export function Amigos() {
     carregar()
   }, [])
 
-  const handleSolicitar = async (e: React.FormEvent) => {
+  const handleSolicitar = async (e: FormEvent) => {
     e.preventDefault()
     if (!usernameInput.trim()) return
     setAddStatus('loading')
@@ -87,7 +87,7 @@ export function Amigos() {
           { key: 'amigos', label: `Amigos (${amigos.length})`, icon: <Users size={15} /> },
           { key: 'pendentes', label: `Pendentes (${pendentes.length})`, icon: <Clock size={15} /> },
           { key: 'adicionar', label: 'Adicionar', icon: <UserPlus size={15} /> },
-        ] as { key: Tab; label: string; icon: React.ReactNode }[]).map((t) => (
+        ] as { key: Tab; label: string; icon: ReactNode }[]).map((t) => (
           <button
             key={t.key}
             onClick={() => setTab(t.key)}
