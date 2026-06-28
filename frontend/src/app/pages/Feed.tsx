@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { listarEventos, compartilharEvento } from '../../api/eventos'
 import { listarAmigos } from '../../api/amizades'
 import type { Evento, Amizade } from '../../types'
-import { MapPin, Clock, Users, Calendar, Share2, X, Check } from 'lucide-react'
+import { MapPin, Users, Calendar, Share2, X, Check } from 'lucide-react'
 import { useAuth } from '../../hooks/useAuth'
 
 function ShareModal({
