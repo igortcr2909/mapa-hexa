@@ -3,18 +3,20 @@ import { useNavigate } from 'react-router-dom'
 import { listarNotificacoes, marcarComoLida, marcarTodasComoLidas } from '../../api/notificacoes'
 import { aceitarAmizade, recusarAmizade } from '../../api/amizades'
 import type { Notificacao } from '../../types'
-import { Bell, UserPlus, Share2, CheckCheck } from 'lucide-react'
+import { Bell, UserPlus, Share2, CheckCheck, AlertTriangle } from 'lucide-react'
 
 const ICONE: Record<Notificacao['tipo'], React.ReactNode> = {
   AMIZADE_RECEBIDA: <UserPlus size={18} />,
   AMIZADE_ACEITA: <UserPlus size={18} />,
   EVENTO_COMPARTILHADO: <Share2 size={18} />,
+  EVENTO_CANCELADO: <AlertTriangle size={18} />,
 }
 
 const COR: Record<Notificacao['tipo'], string> = {
   AMIZADE_RECEBIDA: 'text-azul bg-azul/10',
   AMIZADE_ACEITA: 'text-verde bg-verde/10',
   EVENTO_COMPARTILHADO: 'text-amber-600 bg-amber-50',
+  EVENTO_CANCELADO: 'text-red-500 bg-red-50',
 }
 
 function formatarTempo(ts: number) {

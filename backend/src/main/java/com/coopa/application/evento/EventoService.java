@@ -123,7 +123,30 @@ public class EventoService {
 
         evento.setAtivo(false);
         eventoRepository.save(evento);
-        log.info("Evento cancelado: {}", id);
+
+        // Notificar todos os participantes confirmados
+        List<com.coopa.domain.inscricao.Inscricao> inscritos =
+                inscricaoRepository.findByEventoIdAndAtivaTrue(id);
+
+        User organizador = authService.getById(userId);
+        long agora = System.currentTimeMillis();
+
+        List<Notificacao> notifs = inscritos.stream()
+                .filter(i -> !i.getUserId().equals(userId))
+                .map(i -> Notificacao.builder()
+                        .userId(i.getUserId())
+                        .tipo(Notificacao.TipoNotificacao.EVENTO_CANCELADO)
+                        .referenciaId(id)
+                        .remetenteId(userId)
+                        .remetenteNome(organizador.getNome())
+                        .mensagem("O evento \"" + evento.getTitulo() + "\" foi cancelado pelo organizador.")
+                        .lida(false)
+                        .criadoEm(agora)
+                        .build())
+                .collect(Collectors.toList());
+
+        notificacaoRepository.saveAll(notifs);
+        log.info("Evento cancelado: {} — {} participantes notificados", id, notifs.size());
     }
 
     public void incrementarInscritos(String eventoId) {

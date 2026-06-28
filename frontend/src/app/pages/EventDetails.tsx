@@ -1,11 +1,11 @@
 import { useEffect, useState, useRef, type FormEvent } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { buscarEvento } from '../../api/eventos'
+import { buscarEvento, cancelarEvento } from '../../api/eventos'
 import { confirmarPresenca, cancelarPresenca } from '../../api/inscricoes'
 import { listarMural, publicarMensagem } from '../../api/mural'
 import { useAuth } from '../../hooks/useAuth'
 import type { Evento, MensagemMural } from '../../types'
-import { MapPin, Clock, Users, ArrowLeft, Send, Calendar } from 'lucide-react'
+import { MapPin, Clock, Users, ArrowLeft, Send, Calendar, Trash2, X } from 'lucide-react'
 
 export function EventDetails() {
   const { id } = useParams<{ id: string }>()
@@ -16,6 +16,8 @@ export function EventDetails() {
   const [novaMensagem, setNovaMensagem] = useState('')
   const [loading, setLoading] = useState(true)
   const [loadingInscricao, setLoadingInscricao] = useState(false)
+  const [loadingCancelar, setLoadingCancelar] = useState(false)
+  const [confirmCancelar, setConfirmCancelar] = useState(false)
   const [error, setError] = useState('')
   const muralEndRef = useRef<HTMLDivElement>(null)
 
@@ -51,6 +53,21 @@ export function EventDetails() {
       setError(msg ?? 'Erro ao atualizar presença')
     } finally {
       setLoadingInscricao(false)
+    }
+  }
+
+  const handleCancelarEvento = async () => {
+    if (!id) return
+    setLoadingCancelar(true)
+    try {
+      await cancelarEvento(id)
+      navigate('/feed')
+    } catch (err: unknown) {
+      const msg = (err as { response?: { data?: { error?: string } } })?.response?.data?.error
+      setError(msg ?? 'Erro ao cancelar evento')
+      setConfirmCancelar(false)
+    } finally {
+      setLoadingCancelar(false)
     }
   }
 
@@ -178,8 +195,16 @@ export function EventDetails() {
           </button>
         )}
         {user?.id === evento.organizadorId && (
-          <div className="bg-azul/5 rounded-lg p-3 text-center text-sm text-azul font-medium">
-            👑 Você é o organizador deste evento
+          <div className="space-y-2">
+            <div className="bg-azul/5 rounded-lg p-3 text-center text-sm text-azul font-medium">
+              👑 Você é o organizador deste evento
+            </div>
+            <button
+              onClick={() => setConfirmCancelar(true)}
+              className="w-full py-2.5 bg-red-50 hover:bg-red-100 text-red-600 font-semibold text-sm rounded-lg transition-colors flex items-center justify-center gap-2 border border-red-200"
+            >
+              <Trash2 size={16} /> Cancelar Evento para Todos
+            </button>
           </div>
         )}
       </div>
@@ -229,5 +254,45 @@ export function EventDetails() {
         </form>
       </div>
     </div>
+
+    {/* Modal confirmação cancelamento */}
+    {confirmCancelar && (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+        <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6">
+          <div className="flex items-start justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center shrink-0">
+                <Trash2 size={20} className="text-red-500" />
+              </div>
+              <h3 className="font-bold text-gray-800">Cancelar evento?</h3>
+            </div>
+            <button onClick={() => setConfirmCancelar(false)} className="text-gray-400 hover:text-gray-600">
+              <X size={20} />
+            </button>
+          </div>
+          <p className="text-sm text-gray-600 mb-2">
+            Esta ação é <strong>irreversível</strong>. O evento será cancelado para todos os participantes.
+          </p>
+          <p className="text-sm text-gray-500 bg-red-50 rounded-lg p-3 mb-5">
+            ⚠️ Todos os participantes confirmados receberão uma notificação de cancelamento.
+          </p>
+          <div className="flex gap-3">
+            <button
+              onClick={() => setConfirmCancelar(false)}
+              className="flex-1 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-lg transition-colors"
+            >
+              Voltar
+            </button>
+            <button
+              onClick={handleCancelarEvento}
+              disabled={loadingCancelar}
+              className="flex-1 py-2.5 bg-red-500 hover:bg-red-600 disabled:opacity-50 text-white font-semibold rounded-lg transition-colors"
+            >
+              {loadingCancelar ? 'Cancelando...' : 'Confirmar Cancelamento'}
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
   )
 }

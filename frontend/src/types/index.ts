@@ -87,7 +87,7 @@ export interface Amizade {
 
 export interface Notificacao {
   id: string
-  tipo: 'AMIZADE_RECEBIDA' | 'AMIZADE_ACEITA' | 'EVENTO_COMPARTILHADO'
+  tipo: 'AMIZADE_RECEBIDA' | 'AMIZADE_ACEITA' | 'EVENTO_COMPARTILHADO' | 'EVENTO_CANCELADO'
   referenciaId: string
   remetenteId: string
   remetenteNome: string

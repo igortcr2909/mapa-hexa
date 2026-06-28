@@ -36,6 +36,7 @@ public class Notificacao {
     public enum TipoNotificacao {
         AMIZADE_RECEBIDA,
         AMIZADE_ACEITA,
-        EVENTO_COMPARTILHADO
+        EVENTO_COMPARTILHADO,
+        EVENTO_CANCELADO
     }
 }
