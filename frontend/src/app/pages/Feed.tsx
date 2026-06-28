@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { listarEventos } from '../../api/eventos'
 import type { Evento } from '../../types'
-import { MapPin, Clock, Users, Calendar } from 'lucide-react'
+import { MapPin, Users, Calendar } from 'lucide-react'
 
 export function Feed() {
   const [eventos, setEventos] = useState<Evento[]>([])
