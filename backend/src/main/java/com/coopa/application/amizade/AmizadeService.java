@@ -5,6 +5,7 @@ import com.coopa.domain.amizade.Amizade;
 import com.coopa.domain.amizade.AmizadeRepository;
 import com.coopa.domain.auth.User;
 import com.coopa.domain.auth.UserRepository;
+import com.coopa.domain.inscricao.InscricaoRepository;
 import com.coopa.domain.notificacao.Notificacao;
 import com.coopa.domain.notificacao.NotificacaoRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -22,6 +25,7 @@ public class AmizadeService {
     private final AmizadeRepository amizadeRepository;
     private final UserRepository userRepository;
     private final NotificacaoRepository notificacaoRepository;
+    private final InscricaoRepository inscricaoRepository;
 
     public AmizadeResponseDTO solicitar(String solicitanteId, String receptorUsername) {
         User solicitante = userRepository.findById(solicitanteId)
@@ -134,6 +138,17 @@ public class AmizadeService {
         }
         amizadeRepository.deleteById(amizadeId);
         log.info("Amizade {} removida por {}", amizadeId, userId);
+    }
+
+    public List<Map<String, String>> listarAmigosConfirmados(String userId, String eventoId) {
+        Set<String> amigoIds = amizadeRepository.findAmizadesAceitas(userId).stream()
+                .map(a -> a.getSolicitanteId().equals(userId) ? a.getReceptorId() : a.getSolicitanteId())
+                .collect(Collectors.toSet());
+
+        return inscricaoRepository.findByEventoIdAndAtivaTrue(eventoId).stream()
+                .filter(i -> amigoIds.contains(i.getUserId()))
+                .map(i -> Map.of("userId", i.getUserId(), "nome", i.getUserNome()))
+                .collect(Collectors.toList());
     }
 
     private Amizade getAmizade(String id) {

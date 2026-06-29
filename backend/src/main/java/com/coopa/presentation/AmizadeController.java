@@ -65,6 +65,14 @@ public class AmizadeController {
         return ResponseEntity.ok(amizadeService.recusar(id, userDetails.getUsername()));
     }
 
+    @Operation(summary = "Listar amigos confirmados em um evento")
+    @GetMapping("/evento/{eventoId}")
+    public ResponseEntity<List<Map<String, String>>> amigosConfirmados(
+            @PathVariable String eventoId,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(amizadeService.listarAmigosConfirmados(userDetails.getUsername(), eventoId));
+    }
+
     @Operation(summary = "Remover amigo")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> remover(

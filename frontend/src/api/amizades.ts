@@ -16,3 +16,6 @@ export const recusarAmizade = (id: string) =>
 
 export const removerAmigo = (id: string) =>
   api.delete(`/amizades/${id}`)
+
+export const listarAmigosConfirmados = (eventoId: string) =>
+  api.get<{ userId: string; nome: string }[]>(`/amizades/evento/${eventoId}`)

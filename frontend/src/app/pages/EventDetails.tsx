@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { buscarEvento, cancelarEvento } from '../../api/eventos'
 import { confirmarPresenca, cancelarPresenca } from '../../api/inscricoes'
 import { listarMural, publicarMensagem, excluirMensagem } from '../../api/mural'
+import { listarAmigosConfirmados } from '../../api/amizades'
 import { useAuth } from '../../hooks/useAuth'
 import type { Evento, MensagemMural } from '../../types'
 import { MapPin, Clock, Users, ArrowLeft, Send, Calendar, Trash2, X } from 'lucide-react'
@@ -18,6 +19,7 @@ export function EventDetails() {
   const [loadingInscricao, setLoadingInscricao] = useState(false)
   const [loadingCancelar, setLoadingCancelar] = useState(false)
   const [confirmCancelar, setConfirmCancelar] = useState(false)
+  const [amigosConfirmados, setAmigosConfirmados] = useState<{ userId: string; nome: string }[]>([])
   const [error, setError] = useState('')
   const muralEndRef = useRef<HTMLDivElement>(null)
 
@@ -26,9 +28,11 @@ export function EventDetails() {
     Promise.all([
       buscarEvento(id),
       listarMural(id),
-    ]).then(([evRes, muralRes]) => {
+      listarAmigosConfirmados(id).catch(() => ({ data: [] })),
+    ]).then(([evRes, muralRes, amigosRes]) => {
       setEvento(evRes.data)
       setMensagens(muralRes.data)
+      setAmigosConfirmados(amigosRes.data)
     }).catch(() => setError('Erro ao carregar evento'))
       .finally(() => setLoading(false))
   }, [id])
@@ -219,6 +223,29 @@ export function EventDetails() {
           </div>
         )}
       </div>
+
+      {/* Amigos confirmados */}
+      {amigosConfirmados.length > 0 && (
+        <div className="bg-white rounded-xl shadow-sm p-5 mb-6">
+          <h2 className="text-base font-bold text-azul mb-3 flex items-center gap-2">
+            <Users size={16} className="text-verde" />
+            Amigos que vão ({amigosConfirmados.length})
+          </h2>
+          <div className="flex flex-wrap gap-2">
+            {amigosConfirmados.map((a) => (
+              <div
+                key={a.userId}
+                className="flex items-center gap-2 bg-verde/10 text-verde px-3 py-1.5 rounded-full text-sm font-medium"
+              >
+                <span className="w-6 h-6 rounded-full bg-verde text-white flex items-center justify-center text-xs font-bold shrink-0">
+                  {a.nome.charAt(0).toUpperCase()}
+                </span>
+                {a.nome}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Mural */}
       <div className="bg-white rounded-xl shadow-sm p-6">
