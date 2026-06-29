@@ -1,8 +1,7 @@
 import axios, { InternalAxiosRequestConfig, AxiosResponse, AxiosError } from 'axios'
 
 const api = axios.create({
-  // Vamos forçar o link direto temporariamente para matar esse 404 da Vercel
-  baseURL: 'https://mapa-hexa.onrender.com',
+  baseURL: 'http://localhost:8080/api',
 })
 
 api.interceptors.request.use(

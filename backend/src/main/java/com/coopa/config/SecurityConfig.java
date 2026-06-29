@@ -30,17 +30,12 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable())
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers(
-                    "/api/status",
-                    "/api/auth/**",
-                    "/api/docs/**",
-                    "/api/swagger-ui/**",
-                    "/api/swagger-ui.html"
-                ).permitAll()
+                .requestMatchers("/api/status", "/api/auth/**", "/api/docs/**", "/api/swagger-ui/**", "/api/swagger-ui.html").permitAll()
+                .requestMatchers(request -> request.getMethod().equals("OPTIONS")).permitAll()
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
@@ -56,10 +51,23 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of(allowedOrigins.split(",")));
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        // Aceitar as origens mais comuns de desenvolvimento
+        config.setAllowedOrigins(List.of(
+            "http://localhost",
+            "http://localhost:5173",
+            "http://localhost:3000",
+            "http://localhost:80",
+            "http://127.0.0.1",
+            "http://127.0.0.1:5173",
+            "http://127.0.0.1:3000",
+            "http://127.0.0.1:80",
+            "http://frontend"
+        ));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
+        config.setExposedHeaders(List.of("Authorization"));
         config.setAllowCredentials(true);
+        config.setMaxAge(36000L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
